@@ -33,10 +33,18 @@ def prettyPrint(s1, s2, width):
         res += pretty.format(curIndex, seg1, curIndex+width-1,curIndex, seg2, curIndex+width-1)
         s1 = s1[curIndex:]
         s2 = s2[curIndex:]
-        curIndex = curIndex + width;
+        curIndex = curIndex + width
 
-    return res;
+    return res
 
+def alignNucleotides(seq1, seq2):
+    sm.seq1 = seq1
+    sm.seq2 = seq2
+
+    mat, pos = sm.create_score_matrix(len(seq1) + 1, len(seq2)+1)
+    seq1align, seq2align = sm.traceback(mat, pos)
+
+    return seq1align, seq2align
 
 class distanceMatrix:
     #do stuff here to build the matrix
@@ -64,13 +72,7 @@ class distanceMatrix:
                     arr[name2] = 0
                 else:
                     seq2 = self.sequences[name2]
-                    rows = len(seq1) + 1
-                    cols = len(seq2) + 1
-                    sm.seq1 = seq1
-                    sm.seq2 = seq2
-
-                    score_matrix, start_pos = sm.create_score_matrix(rows, cols)
-                    aligned_seq1, aligned_seq2 = sm.traceback(score_matrix, start_pos)
+                    aligned_seq1, aligned_seq2 = alignNucleotides(seq1, seq2)
 
                     dist = jukesCantor(aligned_seq1, aligned_seq2)
 
@@ -105,5 +107,11 @@ class distanceMatrix:
 mat = distanceMatrix()
 
 mat.readFasta("random.fasta")
-mat.buildMatrix()
-print (mat.matString())
+# mat.buildMatrix()
+# print (mat.matString())
+
+s1a, s2a = alignNucleotides(mat.sequences["dinosaur"], mat.sequences["otherDino"])
+s1b, s2b = alignNucleotides(mat.sequences["otherDino"], mat.sequences["dinosaur"])
+
+print (prettyPrint(s1a, s2a, 100))
+print (prettyPrint(s1b, s2b, 100))
