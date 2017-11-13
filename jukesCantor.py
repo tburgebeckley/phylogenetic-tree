@@ -1,5 +1,5 @@
 import math
-import SmithWaterman as sm
+import Needleman_wunsch as nw
 from collections import OrderedDict
 
 #jukesCantor: implementation of the JukesCantor Distance Alg
@@ -38,11 +38,11 @@ def prettyPrint(s1, s2, width):
     return res
 
 def alignNucleotides(seq1, seq2):
-    sm.seq1 = seq1
-    sm.seq2 = seq2
+    nw.seq1 = seq1
+    nw.seq2 = seq2
 
-    mat, pos = sm.create_score_matrix(len(seq1) + 1, len(seq2)+1)
-    seq1align, seq2align = sm.traceback(mat, pos)
+    mat, pos = nw.build_matrix(len(seq1) + 1, len(seq2)+1)
+    seq1align, seq2align = nw.traceback(mat, pos)
 
     return seq1align, seq2align
 
@@ -89,29 +89,10 @@ class distanceMatrix:
                 string += str(dist[name]) + " "
             string = string[:-1] + '\n'
         return string
-            
-
-
-
-
-# rows = (len(seq1) +1)
-# cols = (len(seq2) +1)
-
-# 
-
-# seq1_aligned, seq2_aligned = sm.traceback(score_matrix, start_pos)
-
-# print (prettyPrint(seq1_aligned, seq2_aligned,100))
-# print ('jukesCantor distance: {}'.format(jukesCantor(seq1_aligned,seq2_aligned)))
+  
 
 mat = distanceMatrix()
 
 mat.readFasta("random.fasta")
-# mat.buildMatrix()
-# print (mat.matString())
-
-s1a, s2a = alignNucleotides(mat.sequences["dinosaur"], mat.sequences["otherDino"])
-s1b, s2b = alignNucleotides(mat.sequences["otherDino"], mat.sequences["dinosaur"])
-
-print (prettyPrint(s1a, s2a, 100))
-print (prettyPrint(s1b, s2b, 100))
+mat.buildMatrix()
+print (mat.matString())
