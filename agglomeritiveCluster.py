@@ -16,13 +16,21 @@ numSeq = int(fo.readline())
 clusterNames = []
 distances = []
 
-i = 0
 for line in fo:
     parse = line.split( )
     clusterNames.append(parse[0])
-    for split in parse[1:]:
-        print(split, sep=' ', end=' ')
-    print()
+    distances.append(parse[1:])
+
+print(distances)
+
+originalDist = {}
+clusterDist = {}
+
+for i in range(0, numSeq):
+    for j in range(0, numSeq):
+        originalDist[i] =
 
 
+print(originalDist)
+print(clusterDist)
 #STEP 1: Cluster
