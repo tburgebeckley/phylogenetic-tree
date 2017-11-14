@@ -1,6 +1,17 @@
 #!usr/bin/python3
 import sys
 
+
+def clusterLinkage(clusterDist, newClusterName, originalDist, clusterNames):
+    for name in clusterNames:
+        smallest = sys.maxint
+        for c1 in name:
+            for c2 in newClusterName:
+                if originalDist[c1][c2] < smallest:
+                    smallestD = originalDist[c1][c2]
+        clusterDist[newClusterName][name] = smallest
+        clusterDist[cluster][newClusterName] = smallest
+
 #Initialization - Read in data and build nested hash structures
 if len(sys.argv) > 2:
     print("Error, only a single filename may be passed as an arguemnt.")
@@ -23,6 +34,5 @@ for line in fo:
     for split in parse[1:]:
         print(split, sep=' ', end=' ')
     print()
-
 
 #STEP 1: Cluster
