@@ -63,6 +63,7 @@ class distanceMatrix:
             self.sequences[lines[i][1:-1]] = lines[i+1][:-1]
 
         return
+
     def buildMatrix(self):
         for name in self.sequences:
             arr = OrderedDict()
@@ -78,6 +79,7 @@ class distanceMatrix:
 
                     arr[name2] = dist
             self.matrix[name] = arr
+        return
     
     def matString(self):
         string = ""

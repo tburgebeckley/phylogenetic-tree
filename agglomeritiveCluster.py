@@ -12,6 +12,11 @@ def clusterLinkage(clusterDist, newClusterName, originalDist, clusterNames):
         clusterDist[newClusterName][name] = smallest
         clusterDist[cluster][newClusterName] = smallest
 
+def shortestD(clusterD):
+    outerkey, innerkey
+
+    return outerkey, innerkey
+
 #Initialization - Read in data and build nested hash structures
 if len(sys.argv) > 2:
     print("Error, only a single filename may be passed as an arguemnt.")
@@ -36,3 +41,5 @@ for line in fo:
     print()
 
 #STEP 1: Cluster
+while len(clusterNames > 2):
+    outer, inner = shortestD(clusterDist)
