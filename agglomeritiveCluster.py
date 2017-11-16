@@ -23,10 +23,10 @@ for line in fo:
 
 originalDist = {}
 clusterDist = {}
-innerDict = {}
 
 #Create inner dict
 for i in range(0, numSeq):
+    innerDict = {}
     for j in range(0, numSeq):
         innerDict[clusterNames[j]] = distances[i][j]
     print(innerDict)
