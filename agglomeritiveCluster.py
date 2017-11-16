@@ -21,16 +21,16 @@ for line in fo:
     clusterNames.append(parse[0])
     distances.append(parse[1:])
 
-print(distances)
-
 originalDist = {}
 clusterDist = {}
+innerDict = {}
 
+#Create inner dict
 for i in range(0, numSeq):
     for j in range(0, numSeq):
-        originalDist[i] =
-
-
-print(originalDist)
-print(clusterDist)
+        innerDict[clusterNames[j]] = distances[i][j]
+    print(innerDict)
+    originalDist[clusterNames[i]] = innerDict
+for key in originalDist:
+    print(key, " ", originalDist[key])
 #STEP 1: Cluster
