@@ -1,6 +1,28 @@
 #!usr/bin/python3
 import sys
 
+#Function to return the shortest distance in clusterDist
+def minDistInMatrix(clusterDist):
+    giftPackage = {'shortestD': float("inf")}
+    for key, value in clusterDist.items():
+        for innerKey in value:
+            if(float(value[innerKey]) > 0 and float(value[innerKey]) < giftPackage['shortestD']):
+                giftPackage['shortestD'] = float(value[innerKey])
+                giftPackage['shortestOutter'] = key
+                giftPackage['shortestInner'] = innerKey
+                giftPackage['newClusterName'] = giftPackage['shortestOutter'] + giftPackage['shortestInner']
+
+
+    return giftPackage
+
+#Function to calculate distances between new cluster and all other cluster
+#using single linkage
+def singleLinkage(clusterDist, newClusterName, originalDist, clusterNames):
+    for cluster in clusterNames:
+        smallestD = float("inf")
+        for cluster in clusterNames:
+
+
 #Initialization - Read in data and build nested hash structures
 if len(sys.argv) > 2:
     print("Error, only a single filename may be passed as an arguemnt.")
@@ -29,8 +51,29 @@ for i in range(0, numSeq):
     innerDict = {}
     for j in range(0, numSeq):
         innerDict[clusterNames[j]] = distances[i][j]
-    print(innerDict)
     originalDist[clusterNames[i]] = innerDict
-for key in originalDist:
-    print(key, " ", originalDist[key])
+    clusterDist[clusterNames[i]] = innerDict
+
 #STEP 1: Cluster
+while(numSeq > 2):
+    #find which clusters to merge in clusterDist
+    giftPackage = minDistInMatrix(clusterDist)
+    print("Shortest Distance in matrix is: ", giftPackage['shortestD'])
+    print("Outter Key: ", giftPackage['shortestOutter'])
+    print("Inner Key: ", giftPackage['shortestInner'])
+    print("New Cluster Name: ", giftPackage['newClusterName'])
+    #merge clusters
+    clusterNames.remove(giftPackage['shortestOutter'])
+    clusterNames.remove(giftPackage['shortestInner'])
+    clusterDist.pop(giftPackage['shortestOutter'])
+    clusterDist.pop(giftPackage['shortestInner'])
+    for cluster in clusterDist:
+        print(cluster, " ", clusterDist[cluster])
+
+    #singleLinkage method called here
+    singleLinkage(clusterDist, giftPackage['newClusterName'], originalDist, clusterNames)
+
+    clusterNames.append(giftPackage['newClusterName'])
+    print("Merging clusters", giftPackage['shortestOutter'], "&", giftPackage['shortestInner'])
+
+    numSeq = numSeq - 1
