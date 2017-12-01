@@ -43,11 +43,6 @@ for line in fo:
     clusterNames.append(parse[0])
     distances.append(parse[1:])
 
-<<<<<<< HEAD
-#STEP 1: Cluster
-while len(clusterNames > 2):
-    outer, inner = shortestD(clusterDist)
-=======
 originalDist = {}
 clusterDist = {}
 
@@ -82,4 +77,3 @@ while(numSeq > 2):
     print("Merging clusters", giftPackage['shortestOutter'], "&", giftPackage['shortestInner'])
 
     numSeq = numSeq - 1
->>>>>>> Joe
