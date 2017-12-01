@@ -8,20 +8,33 @@ def minDistInMatrix(clusterDist):
         for innerKey in value:
             if(float(value[innerKey]) > 0 and float(value[innerKey]) < giftPackage['shortestD']):
                 giftPackage['shortestD'] = float(value[innerKey])
-                giftPackage['shortestOutter'] = key
+                giftPackage['shortestOuter'] = key
                 giftPackage['shortestInner'] = innerKey
-                giftPackage['newClusterName'] = giftPackage['shortestOutter'] + giftPackage['shortestInner']
+                giftPackage['newClusterName'] = giftPackage['shortestOuter'] + giftPackage['shortestInner']
 
 
     return giftPackage
 
 #Function to calculate distances between new cluster and all other cluster
 #using single linkage
-def singleLinkage(clusterDist, newClusterName, originalDist, clusterNames):
+def singleLinkage(clusterDist, originalDist, clusterNames, giftPackage):
+    clusterDist[numSeq-1][giftPackage['newClusterName']] = {}
     for cluster in clusterNames:
+        dist1 = clusterDist[numSeq][cluster][giftPackage['shortestInner']]
+        dist2 = clusterDist[numSeq][cluster][giftPackage['shortestOuter']]
         smallestD = float("inf")
-        for cluster in clusterNames:
+        smallestD = min(float(dist1), float(dist2), smallestD)
 
+        clusterDist[numSeq-1][cluster][giftPackage['newClusterName']] = smallestD
+        clusterDist[numSeq-1][giftPackage['newClusterName']][cluster] = smallestD
+
+def printState():
+    print("{} member Cluster:\n".format(numSeq))
+    print(clusterDist[numSeq])
+    print("\n{} member Cluster:\n".format(numSeq-1))
+    print(clusterDist[numSeq-1])
+    print("Current Cluster Names:\n")
+    print(clusterNames)
 
 #Initialization - Read in data and build nested hash structures
 if len(sys.argv) > 2:
@@ -45,35 +58,45 @@ for line in fo:
 
 originalDist = {}
 clusterDist = {}
+clusterDist[numSeq] = {}
 
 #Create inner dict
 for i in range(0, numSeq):
     innerDict = {}
     for j in range(0, numSeq):
-        innerDict[clusterNames[j]] = distances[i][j]
-    originalDist[clusterNames[i]] = innerDict
-    clusterDist[clusterNames[i]] = innerDict
+        innerDict[clusterNames[j]] = float(distances[i][j])
+    originalDist[clusterNames[i]] = dict(innerDict)
+    clusterDist[numSeq][clusterNames[i]] = dict(innerDict)
 
 #STEP 1: Cluster
 while(numSeq > 2):
     #find which clusters to merge in clusterDist
-    giftPackage = minDistInMatrix(clusterDist)
+    giftPackage = minDistInMatrix(clusterDist[numSeq])
     print("Shortest Distance in matrix is: ", giftPackage['shortestD'])
-    print("Outter Key: ", giftPackage['shortestOutter'])
+    print("Outer Key: ", giftPackage['shortestOuter'])
     print("Inner Key: ", giftPackage['shortestInner'])
     print("New Cluster Name: ", giftPackage['newClusterName'])
     #merge clusters
-    clusterNames.remove(giftPackage['shortestOutter'])
+    clusterDist[numSeq-1] = {}
+    for cluster in clusterDist[numSeq]:
+        clusterDist[numSeq-1][cluster] = dict(clusterDist[numSeq][cluster])
+    clusterNames.remove(giftPackage['shortestOuter'])
     clusterNames.remove(giftPackage['shortestInner'])
-    clusterDist.pop(giftPackage['shortestOutter'])
-    clusterDist.pop(giftPackage['shortestInner'])
-    for cluster in clusterDist:
-        print(cluster, " ", clusterDist[cluster])
+    clusterDist[numSeq-1].pop(giftPackage['shortestOuter'])
+    clusterDist[numSeq-1].pop(giftPackage['shortestInner'])
+    for cluster in clusterDist[numSeq-1]:
+        clusterDist[numSeq-1][cluster].pop(giftPackage['shortestOuter'])
+        clusterDist[numSeq-1][cluster].pop(giftPackage['shortestInner'])
+
+    printState()
 
     #singleLinkage method called here
-    singleLinkage(clusterDist, giftPackage['newClusterName'], originalDist, clusterNames)
+    singleLinkage(clusterDist, originalDist, clusterNames, giftPackage)
 
     clusterNames.append(giftPackage['newClusterName'])
-    print("Merging clusters", giftPackage['shortestOutter'], "&", giftPackage['shortestInner'])
+    print("Merging clusters", giftPackage['shortestOuter'], "&", giftPackage['shortestInner'])
 
+    printState()
     numSeq = numSeq - 1
+
+print(clusterDist)
