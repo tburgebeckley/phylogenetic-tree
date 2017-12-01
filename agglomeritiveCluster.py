@@ -19,6 +19,7 @@ def minDistInMatrix(clusterDist):
 #using single linkage
 def singleLinkage(clusterDist, originalDist, clusterNames, giftPackage):
     clusterDist[numSeq-1][giftPackage['newClusterName']] = {}
+    clusterDist[numSeq-1][giftPackage['newClusterName']][giftPackage['newClusterName']] = 0
     for cluster in clusterNames:
         dist1 = clusterDist[numSeq][cluster][giftPackage['shortestInner']]
         dist2 = clusterDist[numSeq][cluster][giftPackage['shortestOuter']]
@@ -28,13 +29,21 @@ def singleLinkage(clusterDist, originalDist, clusterNames, giftPackage):
         clusterDist[numSeq-1][cluster][giftPackage['newClusterName']] = smallestD
         clusterDist[numSeq-1][giftPackage['newClusterName']][cluster] = smallestD
 
-def printState():
-    print("{} member Cluster:\n".format(numSeq))
-    print(clusterDist[numSeq])
-    print("\n{} member Cluster:\n".format(numSeq-1))
-    print(clusterDist[numSeq-1])
-    print("Current Cluster Names:\n")
-    print(clusterNames)
+def printState(cluster, num):
+    state = ""
+    state +="{} Element Cluster\n".format(num)
+    clusters = []
+    for item in cluster:
+        state += "\t {}".format(item)
+        clusters.append(item)
+    state += '\n'
+    for i in range(len(clusters)):
+        state += "{}\t".format(clusters[i])
+        for j in range(len(clusters)):
+            state += "{}\t".format(cluster[clusters[i]][clusters[j]])
+        state += '\n'
+    state += '\n'
+    print (state)
 
 #Initialization - Read in data and build nested hash structures
 if len(sys.argv) > 2:
@@ -88,15 +97,13 @@ while(numSeq > 2):
         clusterDist[numSeq-1][cluster].pop(giftPackage['shortestOuter'])
         clusterDist[numSeq-1][cluster].pop(giftPackage['shortestInner'])
 
-    printState()
-
     #singleLinkage method called here
     singleLinkage(clusterDist, originalDist, clusterNames, giftPackage)
 
     clusterNames.append(giftPackage['newClusterName'])
     print("Merging clusters", giftPackage['shortestOuter'], "&", giftPackage['shortestInner'])
-
-    printState()
     numSeq = numSeq - 1
 
-print(clusterDist)
+while (numSeq in clusterDist):
+    printState(clusterDist[numSeq], numSeq)
+    numSeq += 1
