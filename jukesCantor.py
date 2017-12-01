@@ -1,6 +1,7 @@
 import math
 import Needleman_wunsch as nw
 from collections import OrderedDict
+import sys
 
 #jukesCantor: implementation of the JukesCantor Distance Alg
 #params: s1 (aligned nucleotide sequence), s2 (aligned nucleotide sequence)
@@ -53,14 +54,18 @@ class distanceMatrix:
     def __init__(self):
         self.sequences = OrderedDict()
         self.matrix = OrderedDict()
+        self.nameMap = {}
     
     def readFasta(self, filename):
-        lines = {}
+        lines = []
         with open (filename, "r") as seqs:
             lines = seqs.readlines()
         
+        curChar = 'a'
         for i in range(0,len(lines),2):
             self.sequences[lines[i][1:-1]] = lines[i+1][:-1]
+            self.nameMap[lines[i][1:-1]] = curChar
+            curChar = chr(ord(curChar)+1)
 
         return
 
@@ -84,24 +89,53 @@ class distanceMatrix:
 
                     dist = jukesCantor(aligned_seq1, aligned_seq2)
 
-                    arr[name2] = dist
-            self.matrix[name] = arr
+                    arr[self.nameMap[name2]] = dist
+            self.matrix[self.nameMap[name]] = arr
         return
     
     def matString(self):
         string = ""
-        
-        for name in self.sequences:
+        count = 0
+        for name in self.matrix:
             dist = self.matrix[name]
             string += name + " "
             for name in dist:
                 string += str(dist[name]) + " "
             string = string[:-1] + '\n'
-        return string
+            count += 1
+        return str(count) + '\n' + string[:-1]
+
+    def nameMapString(self):
+        string = ""
+        for name, value in self.nameMap.items():
+            string += "{}=> {}\n".format(name, value)
+        return string[:-1]
   
+if len(sys.argv) < 2:
+    print("Error: improper arguments supplied\nUsage: python3 jukesCantor.py [inputFile]")
+    sys.exit(1)
+else:
+    try:
+        fo = open(sys.argv[1], 'r')
+        fo.close()
+    except OSError:
+        print("Error!", sys.argv[1], " was not found!")
+        sys.exit(1)
+
 
 mat = distanceMatrix()
 
-mat.readFasta("random.fasta")
+mat.readFasta(sys.argv[1])
 mat.buildMatrix()
-print (mat.matString())
+
+outfile = sys.argv[1] + ".dist"
+names = sys.argv[1] + ".names"
+
+fp = open(outfile, 'w+')
+fp.write(mat.matString())
+fp.close()
+
+fp = open(names, 'w+')
+fp.write(mat.nameMapString())
+fp.close()
+
