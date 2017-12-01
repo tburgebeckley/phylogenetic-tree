@@ -72,8 +72,15 @@ class distanceMatrix:
                 if name == name2:
                     arr[name2] = 0
                 else:
+                    # if name2 in self.matrix and name in self.matrix[name2]:
+                    #     arr[name2] = float(self.matrix[name2][name])
+                    # else:
                     seq2 = self.sequences[name2]
-                    aligned_seq1, aligned_seq2 = alignNucleotides(seq1, seq2)
+
+                    if name2 in self.matrix:
+                         aligned_seq1, aligned_seq2 = alignNucleotides(seq2, seq1)
+                    else:
+                        aligned_seq1, aligned_seq2 = alignNucleotides(seq1, seq2)
 
                     dist = jukesCantor(aligned_seq1, aligned_seq2)
 
