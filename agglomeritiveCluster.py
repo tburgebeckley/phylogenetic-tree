@@ -79,7 +79,7 @@ for i in range(0, numSeq):
     clusterDist[numSeq][clusterNames[i]] = dict(innerDict)
 
 #STEP 1: Cluster
-start_time = time.time()
+start_time = time.clock()
 while(numSeq > 2):
     #find which clusters to merge in clusterDist
     giftPackage = minDistInMatrix(clusterDist[numSeq])
@@ -106,7 +106,7 @@ while(numSeq > 2):
     print("Merging clusters", giftPackage['shortestOuter'], "&", giftPackage['shortestInner'])
     numSeq = numSeq - 1
 
-end_time = time.time() - start_time
+end_time = time.clock() - start_time
 
 while (numSeq in clusterDist):
     printState(clusterDist[numSeq], numSeq)

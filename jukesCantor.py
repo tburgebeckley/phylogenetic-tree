@@ -130,9 +130,9 @@ def main(args):
 
     mat.readFasta(args[1])
     #begin capturing timing data here
-    start_time = time.time()
+    start_time = time.clock()
     mat.buildMatrix()
-    print("Total ALIGNMENT runtime was %s seconds:" % (time.time() - start_time))
+    print("Total ALIGNMENT runtime was %s seconds:" % (time.clock() - start_time))
 
     #end capturing timing data
     outfile = args[1] + ".dist"
