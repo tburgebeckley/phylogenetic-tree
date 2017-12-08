@@ -7,8 +7,8 @@ import sys
 #params: s1 (aligned nucleotide sequence), s2 (aligned nucleotide sequence)
 #output: numeric value representing evolutionary distance
 def jukesCantor(s1, s2):
-    diffCtr = 0
-    lenCtr = 0
+    diffCtr = 0.0
+    lenCtr = 0.0
 
     for i in range (len(s1)):
         if ((s1[i] != '-') and (s2[i] != '-')):
