@@ -17,7 +17,7 @@ def jukesCantor(s1, s2):
                 diffCtr = diffCtr + 1
     diffCtr = float(diffCtr/lenCtr)
 
-    jukes = (-3/4 * math.log(1-(4/3 * diffCtr)))
+    jukes = (-3.0/4 * math.log(1.0-(4.0/3 * diffCtr)))
 
     return jukes
 
@@ -87,7 +87,8 @@ class distanceMatrix:
                     else:
                         aligned_seq1, aligned_seq2 = alignNucleotides(seq1, seq2)
 
-                    dist = jukesCantor(aligned_seq1, aligned_seq2)
+                    dist = jukesCantor(aligned_seq1, aligned_seq2) 
+                    if (dist < 0) : dist = dist * -1.0
 
                     arr[self.nameMap[name2]] = dist
             self.matrix[self.nameMap[name]] = arr
@@ -110,32 +111,35 @@ class distanceMatrix:
         for name, value in self.nameMap.items():
             string += "{}=> {}\n".format(name, value)
         return string[:-1]
-  
-if len(sys.argv) < 2:
-    print("Error: improper arguments supplied\nUsage: python3 jukesCantor.py [inputFile]")
-    sys.exit(1)
-else:
-    try:
-        fo = open(sys.argv[1], 'r')
-        fo.close()
-    except OSError:
-        print("Error!", sys.argv[1], " was not found!")
-        sys.exit(1)
+
+def main(args):
+    if len(args) < 2:
+        print("Error: improper arguments supplied\nUsage: python3 jukesCantor.py [inputFile]")
+        exit(1)
+    else:
+        try:
+            fo = open(args[1], 'r')
+            fo.close()
+        except OSError:
+            print("Error!", args[1], " was not found!")
+            sys.exit(1)
 
 
-mat = distanceMatrix()
+    mat = distanceMatrix()
 
-mat.readFasta(sys.argv[1])
-mat.buildMatrix()
+    mat.readFasta(args[1])
+    mat.buildMatrix()
 
-outfile = sys.argv[1] + ".dist"
-names = sys.argv[1] + ".names"
+    outfile = args[1] + ".dist"
+    names = args[1] + ".names"
 
-fp = open(outfile, 'w+')
-fp.write(mat.matString())
-fp.close()
+    fp = open(outfile, 'w+')
+    fp.write(mat.matString())
+    fp.close()
 
-fp = open(names, 'w+')
-fp.write(mat.nameMapString())
-fp.close()
+    fp = open(names, 'w+')
+    fp.write(mat.nameMapString())
+    fp.close()
 
+if __name__ == "__main__":
+    main(sys.argv)
