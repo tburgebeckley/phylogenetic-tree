@@ -1,5 +1,6 @@
 #!usr/bin/python3
 import sys
+import time
 
 #Function to return the shortest distance in clusterDist
 def minDistInMatrix(clusterDist):
@@ -78,6 +79,7 @@ for i in range(0, numSeq):
     clusterDist[numSeq][clusterNames[i]] = dict(innerDict)
 
 #STEP 1: Cluster
+start_time = time.time()
 while(numSeq > 2):
     #find which clusters to merge in clusterDist
     giftPackage = minDistInMatrix(clusterDist[numSeq])
@@ -104,6 +106,10 @@ while(numSeq > 2):
     print("Merging clusters", giftPackage['shortestOuter'], "&", giftPackage['shortestInner'])
     numSeq = numSeq - 1
 
+end_time = time.time() - start_time
+
 while (numSeq in clusterDist):
     printState(clusterDist[numSeq], numSeq)
     numSeq += 1
+
+print("Total CLUSTERING time is %s milliseconds" % (end_time * 1000))

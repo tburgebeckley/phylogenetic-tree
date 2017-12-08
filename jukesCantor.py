@@ -1,4 +1,5 @@
 import math
+import time
 import Needleman_wunsch as nw
 from collections import OrderedDict
 import sys
@@ -55,12 +56,12 @@ class distanceMatrix:
         self.sequences = OrderedDict()
         self.matrix = OrderedDict()
         self.nameMap = {}
-    
+
     def readFasta(self, filename):
         lines = []
         with open (filename, "r") as seqs:
             lines = seqs.readlines()
-        
+
         curChar = 'a'
         for i in range(0,len(lines),2):
             self.sequences[lines[i][1:-1]] = lines[i+1][:-1]
@@ -87,13 +88,13 @@ class distanceMatrix:
                     else:
                         aligned_seq1, aligned_seq2 = alignNucleotides(seq1, seq2)
 
-                    dist = jukesCantor(aligned_seq1, aligned_seq2) 
+                    dist = jukesCantor(aligned_seq1, aligned_seq2)
                     if (dist < 0) : dist = dist * -1.0
 
                     arr[self.nameMap[name2]] = dist
             self.matrix[self.nameMap[name]] = arr
         return
-    
+
     def matString(self):
         string = ""
         count = 0
@@ -128,8 +129,12 @@ def main(args):
     mat = distanceMatrix()
 
     mat.readFasta(args[1])
+    #begin capturing timing data here
+    start_time = time.time()
     mat.buildMatrix()
+    print("Total ALIGNMENT runtime was %s seconds:" % (time.time() - start_time))
 
+    #end capturing timing data
     outfile = args[1] + ".dist"
     names = args[1] + ".names"
 
