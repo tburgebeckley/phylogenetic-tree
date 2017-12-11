@@ -30,7 +30,7 @@ def singleLinkage(clusterDist, originalDist, clusterNames, giftPackage):
         clusterDist[numSeq-1][cluster][giftPackage['newClusterName']] = smallestD
         clusterDist[numSeq-1][giftPackage['newClusterName']][cluster] = smallestD
 
-def printState(cluster, num):
+def printState(cluster, num, putfile):
     state = ""
     state +="{} Element Cluster\n".format(num)
     clusters = []
@@ -44,7 +44,7 @@ def printState(cluster, num):
             state += "{}\t".format(cluster[clusters[i]][clusters[j]])
         state += '\n'
     state += '\n'
-    print (state)
+    outfile.write(state)
 
 #Initialization - Read in data and build nested hash structures
 if len(sys.argv) > 2:
@@ -53,9 +53,9 @@ if len(sys.argv) > 2:
 else:
     try:
         fo = open(sys.argv[1], 'r')
-        print("File " + sys.argv[1] + " was successfully opened!")
     except OSError:
         print("Error!", sys.argv[1], " was not found!")
+        exit(1)
 
 numSeq = int(fo.readline())
 clusterNames = []
@@ -78,15 +78,17 @@ for i in range(0, numSeq):
     originalDist[clusterNames[i]] = dict(innerDict)
     clusterDist[numSeq][clusterNames[i]] = dict(innerDict)
 
+outfilename = "clustering." + sys.argv[1]
+
 #STEP 1: Cluster
 start_time = time.clock()
 while(numSeq > 2):
     #find which clusters to merge in clusterDist
     giftPackage = minDistInMatrix(clusterDist[numSeq])
-    print("Shortest Distance in matrix is: ", giftPackage['shortestD'])
-    print("Outer Key: ", giftPackage['shortestOuter'])
-    print("Inner Key: ", giftPackage['shortestInner'])
-    print("New Cluster Name: ", giftPackage['newClusterName'])
+    # print("Shortest Distance in matrix is: ", giftPackage['shortestD'])
+    # print("Outer Key: ", giftPackage['shortestOuter'])
+    # print("Inner Key: ", giftPackage['shortestInner'])
+    # print("New Cluster Name: ", giftPackage['newClusterName'])
     #merge clusters
     clusterDist[numSeq-1] = {}
     for cluster in clusterDist[numSeq]:
@@ -103,13 +105,13 @@ while(numSeq > 2):
     singleLinkage(clusterDist, originalDist, clusterNames, giftPackage)
 
     clusterNames.append(giftPackage['newClusterName'])
-    print("Merging clusters", giftPackage['shortestOuter'], "&", giftPackage['shortestInner'])
+    # print("Merging clusters", giftPackage['shortestOuter'], "&", giftPackage['shortestInner'])
     numSeq = numSeq - 1
 
 end_time = time.clock() - start_time
-
+outfile = open(outfilename, 'w+')
 while (numSeq in clusterDist):
-    printState(clusterDist[numSeq], numSeq)
+    printState(clusterDist[numSeq], numSeq, outfile)
     numSeq += 1
-
+outfile.close()
 print("Total CLUSTERING time is %s milliseconds" % (end_time * 1000))
